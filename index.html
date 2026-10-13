@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora Oncara</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brown:#3b2a20; --brown-2:#4a3628; --cream:#f8f2e7; --card:#fbf7ef; --line:#e6dccb;
+  --tan:#e6c690; --tan-soft:#ecdcc0; --text:#2f241c; --muted:#7a6a5c; --accent:#b08a5a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#f4ead8 0%,#f7efe2 50%,#ead8bd 100%);background-attachment:fixed;color:var(--text);font:14px/1.4 "Work Sans",system-ui,sans-serif}
+h1,h2,h3,.serif{font-family:"Alegreya",Georgia,serif}
+header{background:var(--brown);background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:4px 4px;color:#fff;padding:22px 16px 26px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.brand{font-size:11px;letter-spacing:.25em;color:var(--tan);font-weight:600}
+.brand::before{content:"●";font-size:7px;margin-right:8px;vertical-align:middle}
+header h1{margin:6px 0 4px;font-size:28px}
+header p{margin:0;color:#d8c8b4;font-size:13px}
+.btn{font:600 12px "Alegreya",serif;letter-spacing:.03em;text-transform:uppercase;border:1px solid var(--accent);background:var(--tan);color:var(--brown);border-radius:6px;padding:8px 12px;cursor:pointer}
+.btn:hover{filter:brightness(1.05)}
+.btn.dark{background:var(--brown);color:#fff;border-color:#6b5545}
+.btn.ghost{background:var(--tan-soft)}
+main.wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding-top:28px;padding-bottom:60px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 18px rgba(80,55,30,.08);padding:18px 20px;margin-bottom:24px}
+.eyebrow{font-size:10px;letter-spacing:.15em;font-weight:600;color:var(--muted);text-transform:uppercase}
+.card h2{margin:2px 0 14px;font-size:20px;text-transform:uppercase;letter-spacing:.03em}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{background:var(--brown);color:#f3e7d6;font-size:10px;letter-spacing:.08em;text-transform:uppercase;text-align:left;padding:10px 6px;font-weight:600}
+td{padding:6px;border-top:1px solid var(--line)}
+tr:first-child td{border-top:0}
+td.calc{font-weight:600;white-space:nowrap;font-size:13px}
+input[type=text],input[type=number]{width:100%;min-width:60px;border:1px solid #d8cbb6;background:#fff;border-radius:5px;padding:6px 7px;font:inherit;color:var(--text)}
+input:focus{outline:2px solid var(--tan);border-color:var(--accent)}
+.del{border:1px solid #d8cbb6;background:#fff;border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--brown)}
+.del:hover{background:#f3e3d0}
+.foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;gap:16px;flex-wrap:wrap}
+.total{text-align:right;margin-left:auto}
+.total .lbl{font:700 12px "Alegreya",serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.total .val{font-size:18px;font-weight:700}
+.add{width:36px;height:32px;font-size:18px;padding:0}
+.field{display:flex;flex-direction:column;gap:4px;max-width:260px}
+.field label{font:700 12px "Alegreya",serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+.pill{background:var(--tan-soft);border-radius:8px;padding:10px 16px}
+.pill .lbl{font:700 12px "Alegreya",serif;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
+.pill .val{font-weight:700}
+.ship{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ship label{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;cursor:pointer}
+.ship label.on{border-color:var(--accent);background:#f6ead6}
+.ship span{flex:1;font-weight:600;font-size:13px}
+.ship input[type=number]{max-width:120px}
+.card.dark{background:var(--brown);color:#f3e7d6;border-color:#2a1d15}
+.card.dark .eyebrow{color:var(--tan)}
+.card.dark .field label{color:#d8c8b4}
+aside{position:sticky;top:16px}
+.res-line{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:12px;color:var(--muted);text-transform:uppercase;font-family:"Alegreya",serif;letter-spacing:.03em}
+.res-line b{color:var(--text);font-family:"Work Sans",sans-serif;white-space:nowrap}
+.res-line.big{color:var(--text);font-weight:700;font-size:13px}
+.res-line.big b{font-size:16px}
+hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+.final{background:var(--brown);color:#fff;border-radius:8px;padding:14px 16px;margin-top:12px}
+.final .lbl{font:700 12px "Alegreya",serif;letter-spacing:.08em;color:var(--tan);text-transform:uppercase}
+.final .val{font-size:24px;font-weight:700;margin-top:4px}
+.final small{display:block;color:#d8c8b4;margin-top:4px}
+.chk{width:18px;height:18px;accent-color:var(--brown)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--brown);color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (max-width:900px){main.wrap{grid-template-columns:1fr}aside{position:static;order:-1}}
+@media (max-width:560px){.ship{grid-template-columns:1fr}.card{padding:14px}header h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div>
+      <div class="brand">ONCARA</div>
+      <h1>Calculadora de costos</h1>
+      <p>Conocé cuánto cuesta realmente crear cada set.</p>
+    </div>
+    <button class="btn" id="reset">↻ Restablecer calculadora</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div>
+    <section class="card" data-sec="materiales">
+      <div class="eyebrow">01 · Inventario</div><h2>Costos de materiales</h2>
+      <div class="tbl-wrap"><table></table></div>
+      <div class="foot"><button class="btn ghost add">+</button>
+        <div class="total"><div class="lbl">Total costos de materiales por set</div><div class="val" data-total></div></div></div>
+    </section>
+
+    <section class="card" data-sec="kit">
+      <div class="eyebrow">02 · Presentación</div><h2>Kit de aplicación</h2>
+      <div class="tbl-wrap"><table></table></div>
+      <div class="foot"><button class="btn ghost add">+</button>
+        <div class="total"><div class="lbl">Total kit de aplicación por set</div><div class="val" data-total></div></div></div>
+    </section>
+
+    <section class="card" data-sec="gastos">
+      <div class="eyebrow">03 · Estructura</div><h2>Gastos del emprendimiento</h2>
+      <div class="row">
+        <div class="field"><label>Sets estimados al mes</label><input type="number" id="setsMes" min="1"></div>
+        <button class="btn ghost" id="aplicarSets">Aplicar a todas</button>
+      </div>
+      <div class="tbl-wrap"><table></table></div>
+      <div class="foot"><button class="btn ghost add">+</button>
+        <div class="total"><div class="lbl">Total gastos mensuales</div><div class="val" id="gastosMes"></div></div>
+        <div class="total" style="margin-left:0"><div class="lbl">Costo de gastos mensuales por set</div><div class="val" data-total></div></div></div>
+    </section>
+
+    <section class="card" data-sec="equipos">
+      <div class="eyebrow">04 · Vida útil</div><h2>Equipamiento</h2>
+      <div class="tbl-wrap"><table></table></div>
+      <div class="foot"><button class="btn ghost add">+</button>
+        <div class="total"><div class="lbl">Total equipamiento por set</div><div class="val" data-total></div></div></div>
+    </section>
+
+    <section class="card" data-sec="decos">
+      <div class="eyebrow">05 · Oficio</div><h2>Decoraciones / mano de obra</h2>
+      <div class="row">
+        <div class="field"><label>Valor de mi hora de trabajo</label><input type="number" id="valorHora" min="0"></div>
+        <div class="pill"><div class="lbl">Valor por minuto</div><div class="val" id="valorMin"></div></div>
+        <div class="field"><label>Tiempo de armado del set (min)</label><input type="number" id="armado" min="0" placeholder="Ej: 90"></div>
+        <div class="pill"><div class="lbl">Costo de armado</div><div class="val" id="costoArmado"></div></div>
+      </div>
+      <div class="tbl-wrap"><table></table></div>
+      <div class="foot"><button class="btn ghost add">+</button>
+        <div class="total"><div class="lbl">Total mano de obra (armado + decoraciones)</div><div class="val" data-total></div></div></div>
+    </section>
+
+    <section class="card" data-sec="packaging">
+      <div class="eyebrow">06 · Ritual de entrega</div><h2>Packaging</h2>
+      <div class="tbl-wrap"><table></table></div>
+      <div class="foot"><button class="btn ghost add">+</button>
+        <div class="total"><div class="lbl">Total packaging por pedido (incluidos)</div><div class="val" data-total></div></div></div>
+    </section>
+
+    <section class="card">
+      <div class="eyebrow">07 · Trayecto</div><h2>Entregas / envíos</h2>
+      <div class="ship" id="ship"></div>
+    </section>
+
+    <section class="card dark">
+      <div class="eyebrow">08 · Pedido a medida</div><h2>Calculadora Oncara</h2>
+      <div class="row">
+        <div class="field" style="max-width:none;flex:1;min-width:180px"><label>Cliente</label><input type="text" id="cliente" placeholder="Nombre del cliente"></div>
+        <div class="field" style="max-width:120px"><label>Margen %</label><input type="number" id="margen" min="0" max="95"></div>
+        <div class="field" style="max-width:160px"><label>Redondear a</label>
+          <select id="redondeo" style="padding:6px;border-radius:5px;border:1px solid #d8cbb6;font:inherit">
+            <option value="0">Sin redondeo</option><option value="100">$ 100</option><option value="500">$ 500</option><option value="1000">$ 1.000</option>
+          </select></div>
+      </div>
+      <div class="row" style="margin-bottom:0">
+        <button class="btn" id="copiar">Copiar presupuesto</button>
+        <button class="btn dark" id="nuevo">Nuevo pedido</button>
+      </div>
+    </section>
+  </div>
+
+  <aside class="card">
+    <div class="eyebrow">Cierre del pedido</div><h2>Resultado final</h2>
+    <div id="res"></div>
+    <hr>
+    <div class="res-line big">Costo total <b id="rCosto"></b></div>
+    <div class="res-line big">Margen de ganancia <b id="rMargen"></b></div>
+    <div class="res-line big">Ganancia <b id="rGanancia"></b></div>
+    <div class="final"><div class="lbl">Precio final a cobrar</div><div class="val" id="rFinal"></div><small id="rCliente"></small></div>
+  </aside>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const DEFAULTS = {
+  materiales: [
+    ["Guantes",8800,100,"PZ",50],["Wipes",1980,200,"PZ",200],["Semipermanente",3500,10,"ML",20],
+    ["Top Coat",1100,7,"ML",20],["Base Coat",1100,7,"ML",20],["Tips ovalados",10450,504,"PZ",50],
+    ["Tips medios",9500,504,"PZ",50],["Lima 100/180",1000,1,"PZ",1],["Lima Sponge",6600,6,"PZ",1],
+    ["Pincel",11550,1,"PZ",5000],["Pincel 3D",2970,1,"PZ",5000],["Campos",2970,50,"PZ",50],
+    ["Cabina",24200,1,"PZ",5000],["Lámpara mesa",1780,1,"PZ",5000],["Alcohol",2200,250,"ML",1000]
+  ].map(([n,precio,cant,unidad,serv])=>({n,precio,cant,unidad,serv})),
+  kit: [
+    ["Kit armado",10450,20,"PZ",20],["Tarjetas de presentación",13000,125,"HOJAS",500],
+    ["Stickers",9000,20,"HOJAS",250],["Cinta doble faz",2860,2,"PZ",500]
+  ].map(([n,precio,cant,unidad,serv])=>({n,precio,cant,unidad,serv})),
+  setsMes: 20,
+  gastos: [{n:"Luz",mensual:27000,sets:20},{n:"Internet",mensual:50000,sets:20}],
+  equipos: [{n:"Lente macro",precio:19820,sets:5000},{n:"Trípode + luz",precio:17955,sets:5000}],
+  valorHora: 10000,
+  decos: [["Nail art fácil",10],["Nail art medio",20],["Nail art complejo",40],["Sticker",5],["Cat Eye",10],
+    ["Cromado",10],["Francesas",15],["Dijes",10],["3D",20],["Relieve",15]].map(([n,min])=>({n,min,unas:0})),
+  packaging: [{inc:true,n:"Bolsa riñón",precio:3500,cant:50,unidad:"PZ"},{inc:true,n:"Sobre con burbujas",precio:9180,cant:10,unidad:"PZ"}],
+  envios: [{n:"Punto sin costo de traslado",costo:0},{n:"Punto con costo de traslado",costo:4000},
+    {n:"Sucursal – Clásico",costo:0},{n:"Sucursal – Expreso",costo:0},{n:"Domicilio – Clásico",costo:0},{n:"Domicilio – Expreso",costo:0}],
+  armado: 0, envioSel: 0, margen: 40, redondeo: 0, cliente: ""
+};
+const KEY = "oncara-calc-v1";
+const clone = o => JSON.parse(JSON.stringify(o));
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || clone(DEFAULTS); } catch { S = clone(DEFAULTS); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+const num = v => { const x = parseFloat(v); return isFinite(x) ? x : 0; };
+const div = (a,b) => num(b) ? num(a)/num(b) : 0;
+const fmt = v => "$ " + v.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const vMin = () => num(S.valorHora)/60;
+
+const used = r => r.inc !== false;
+const perSet = {cols:[["inc","check","Usar"],["n","text","Material"],["precio","num","Precio total"],["cant","num","Cantidad"],["unidad","text","Unidad"],["serv","num","Servicios estimados"],["c","calc","Costo por servicio",r=>div(r.precio,r.serv)]],
+  cost:r=>used(r) ? div(r.precio,r.serv) : 0, blank:()=>({inc:true,n:"",precio:0,cant:1,unidad:"PZ",serv:1})};
+const SECS = {
+  materiales: perSet, kit: perSet,
+  gastos: {cols:[["n","text","Gasto"],["mensual","num","Costo mensual"],["sets","num","Sets estimados al mes"],["c","calc","Costo por set",r=>div(r.mensual,r.sets)]],
+    cost:r=>div(r.mensual,r.sets), blank:()=>({n:"",mensual:0,sets:num(S.setsMes)||1})},
+  equipos: {cols:[["inc","check","Usar"],["n","text","Equipamiento"],["precio","num","Precio"],["sets","num","Sets estimados"],["c","calc","Costo por set",r=>div(r.precio,r.sets)]],
+    cost:r=>used(r) ? div(r.precio,r.sets) : 0, blank:()=>({inc:true,n:"",precio:0,sets:1000})},
+  decos: {cols:[["n","text","Diseño"],["min","num","Tiempo en minutos"],["vh","calc","Valor hora",()=>num(S.valorHora)],["pu","calc","Precio unitario",r=>num(r.min)*vMin()],["unas","num","Cantidad de uñas"],["c","calc","Costo total",r=>num(r.min)*vMin()*num(r.unas)]],
+    cost:r=>num(r.min)*vMin()*num(r.unas), blank:()=>({n:"",min:0,unas:0})},
+  packaging: {cols:[["inc","check","Incluir"],["n","text","Material"],["precio","num","Precio total"],["cant","num","Cantidad"],["unidad","text","Unidad"],["c","calc","Costo por pedido",r=>div(r.precio,r.cant)]],
+    cost:r=>used(r) ? div(r.precio,r.cant) : 0, blank:()=>({inc:true,n:"",precio:0,cant:1,unidad:"PZ"})}
+};
+const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+
+function renderTable(key){
+  const sec = SECS[key], table = document.querySelector(`[data-sec="${key}"] table`);
+  let h = "<thead><tr>" + sec.cols.map(c=>c[1]==="check" ? `<th><label><input class="chk" type="checkbox" data-all ${S[key].every(used)?"checked":""}> ${c[2]}</label></th>` : `<th>${c[2]}</th>`).join("") + "<th></th></tr></thead><tbody>";
+  S[key].forEach((r,i)=>{
+    h += "<tr>" + sec.cols.map(([k,t])=>{
+      if (t==="calc") return `<td class="calc" data-c="${k}" data-i="${i}"></td>`;
+      if (t==="check") return `<td><input class="chk" type="checkbox" data-k="${k}" data-i="${i}" ${used(r)?"checked":""}></td>`;
+      return `<td><input type="${t==="num"?"number":"text"}" ${t==="num"?'min="0" step="any"':""} data-k="${k}" data-i="${i}" value="${esc(r[k])}"></td>`;
+    }).join("") + `<td><button class="del" title="Eliminar" data-del="${i}">🗑</button></td></tr>`;
+  });
+  table.innerHTML = h + "</tbody>";
+}
+
+function renderShip(){
+  document.getElementById("ship").innerHTML = S.envios.map((e,i)=>`
+    <label class="${S.envioSel===i?"on":""}"><input type="radio" name="envio" value="${i}" ${S.envioSel===i?"checked":""}>
+    <span>${esc(e.n)}</span><input type="number" min="0" step="any" data-envio="${i}" value="${esc(e.costo)}"></label>`).join("");
+}
+
+function totals(){
+  const t = {};
+  for (const k in SECS) t[k] = S[k].reduce((a,r)=>a+SECS[k].cost(r),0);
+  t.decos += num(S.armado)*vMin();
+  t.envio = S.envios[S.envioSel] ? num(S.envios[S.envioSel].costo) : 0;
+  return t;
+}
+
+function refresh(){
+  for (const k in SECS){
+    const sec = SECS[k], el = document.querySelector(`[data-sec="${k}"]`);
+    el.querySelectorAll("td.calc").forEach(td=>{
+      const col = sec.cols.find(c=>c[0]===td.dataset.c);
+      td.textContent = fmt(col[3](S[k][td.dataset.i]));
+    });
+  }
+  const t = totals();
+  for (const k in SECS) document.querySelector(`[data-sec="${k}"] [data-total]`).textContent = fmt(t[k]);
+  document.getElementById("gastosMes").textContent = fmt(S.gastos.reduce((a,r)=>a+num(r.mensual),0));
+  document.getElementById("valorMin").textContent = fmt(vMin());
+  document.getElementById("costoArmado").textContent = fmt(num(S.armado)*vMin());
+
+  const lines = [["Costo de materiales",t.materiales],["Kit de aplicación",t.kit],["Gastos mensuales por set",t.gastos],
+    ["Equipamiento",t.equipos],["Decoraciones / mano de obra",t.decos],["Packaging",t.packaging],["Envío / traslado",t.envio]];
+  document.getElementById("res").innerHTML = lines.map(([l,v])=>`<div class="res-line">${l}<b>${fmt(v)}</b></div>`).join("");
+  const costo = lines.reduce((a,l)=>a+l[1],0);
+  const m = Math.min(Math.max(num(S.margen),0),95);
+  let final = costo/(1-m/100);
+  const rd = num(S.redondeo);
+  if (rd) final = Math.ceil(final/rd)*rd;
+  document.getElementById("rCosto").textContent = fmt(costo);
+  document.getElementById("rMargen").textContent = m + "%";
+  document.getElementById("rGanancia").textContent = fmt(final-costo);
+  document.getElementById("rFinal").textContent = fmt(final);
+  document.getElementById("rCliente").textContent = S.cliente ? "Cliente: " + S.cliente : "";
+  S._resumen = {lines, costo, final};
+  save();
+}
+
+function renderAll(){
+  for (const k in SECS) renderTable(k);
+  renderShip();
+  for (const id of ["setsMes","valorHora","armado","margen","redondeo","cliente"]) document.getElementById(id).value = S[id];
+  refresh();
+}
+
+// Eventos de tablas
+for (const k in SECS){
+  const el = document.querySelector(`[data-sec="${k}"]`);
+  el.addEventListener("input", e=>{
+    const {k:field,i} = e.target.dataset;
+    if (e.target.dataset.all!==undefined){ S[k].forEach(r=>r.inc = e.target.checked); renderTable(k); refresh(); return; }
+    if (field===undefined) return;
+    S[k][i][field] = e.target.type==="checkbox" ? e.target.checked : e.target.type==="number" ? e.target.value : e.target.value;
+    refresh();
+  });
+  el.addEventListener("click", e=>{
+    if (e.target.dataset.del!==undefined){ S[k].splice(+e.target.dataset.del,1); renderTable(k); refresh(); }
+    if (e.target.classList.contains("add")){ S[k].push(SECS[k].blank()); renderTable(k); refresh();
+      const ins = el.querySelectorAll("tbody tr:last-child input[type=text]"); if (ins[0]) ins[0].focus(); }
+  });
+}
+document.getElementById("ship").addEventListener("input", e=>{
+  if (e.target.name==="envio"){ S.envioSel = +e.target.value; renderShip(); }
+  if (e.target.dataset.envio!==undefined) S.envios[e.target.dataset.envio].costo = e.target.value;
+  refresh();
+});
+for (const id of ["setsMes","valorHora","armado","margen","redondeo","cliente"])
+  document.getElementById(id).addEventListener("input", e=>{ S[id] = e.target.value; refresh(); });
+document.getElementById("aplicarSets").onclick = ()=>{ S.gastos.forEach(g=>g.sets = S.setsMes); renderTable("gastos"); refresh(); };
+document.getElementById("reset").onclick = ()=>{
+  if (confirm("¿Restablecer todos los valores a los originales? Se pierden los cambios guardados.")){ S = clone(DEFAULTS); renderAll(); toast("Calculadora restablecida"); }
+};
+document.getElementById("nuevo").onclick = ()=>{
+  S.decos.forEach(d=>d.unas = 0); S.armado = 0; S.cliente = ""; S.envioSel = 0; renderAll(); toast("Listo para un nuevo pedido");
+};
+document.getElementById("copiar").onclick = ()=>{
+  const {lines,costo,final} = S._resumen;
+  const decos = S.decos.filter(d=>num(d.unas)>0).map(d=>`  • ${d.n}: ${d.unas} uña(s)`);
+  const txt = [`ONCARA — Presupuesto${S.cliente?" para "+S.cliente:""}`,
+    ...(decos.length?["Diseños:",...decos]:[]),
+    `Envío: ${S.envios[S.envioSel]?.n || "-"}`,
+    `Total a cobrar: ${fmt(final)}`].join("\n");
+  const done = ()=>toast("Presupuesto copiado");
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(done).catch(()=>{ prompt("Copiá el presupuesto:", txt); });
+};
+function toast(msg){ const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
+
+renderAll();
+</script>
+</body>
+</html>
